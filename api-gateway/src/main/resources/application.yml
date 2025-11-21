@@ -1,0 +1,54 @@
+server:
+  port: 8080
+
+spring:
+  main:
+    web-application-type: reactive
+
+  application:
+    name: api-gateway
+
+  config:
+    import: optional:configserver:http://localhost:8881
+
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: test-route
+              uri: http://httpbin.org
+              predicates:
+                - Path=/test/**
+
+            - id: product-service-route
+              uri: lb://product-service
+              predicates:
+                - Path=/products/**
+
+            - id: inventory-service-route
+              uri: lb://inventory-service
+              predicates:
+                - Path=/inventory/**
+
+            - id: order-service-route
+              uri: lb://order-service
+              predicates:
+                - Path=/orders/**
+
+            - id: notification-service-route
+              uri: lb://notification-service
+              predicates:
+                - Path=/notify/**
+
+  discovery:
+    enabled: true
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
+jwt:
+  secret: pYQxKq34j8u48fsfFyN8rbJBVAIRzMDCyleJcXqQ3EY=
+  permit-path-prefixes: /auth,/actuator,/health
