@@ -1,0 +1,30 @@
+server:
+  port: 8100
+
+spring:
+  application:
+    name: auth-service
+
+  config:
+    import: optional:configserver:http://localhost:8881
+
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/authdb
+    username: postgres
+    password: ADMIN@123
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
+jwt:
+  secret: pYQxKq34j8u48fsfFyN8rbJBVAIRzMDCyleJcXqQ3EY=
+  expiration-ms: 3600000  # 1 hour
