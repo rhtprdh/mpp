@@ -1,0 +1,28 @@
+server:
+  port: 8400
+
+spring:
+  application:
+    name: notification-service
+
+  config:
+    import: optional:configserver:http://localhost:8881
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
+# below prop for tracing 
+management:
+  tracing:
+    sampling:
+      probability: 1.0   # capture 100% tracing data
+
+  zipkin:
+    tracing:
+      endpoint: http://localhost:9411/api/v2/spans
+
+logging:
+  pattern:
+     level: "%5p [${spring.application.name}, %X{traceId}, %X{spanId}]"
