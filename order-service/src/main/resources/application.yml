@@ -1,0 +1,55 @@
+server:
+  port: 9003
+
+spring:
+  application:
+    name: order-service
+
+  config:
+    import: optional:configserver:http://localhost:8881
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/orderdb
+    username: postgres
+    password: ADMIN@123
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
+# below prop for tracing 
+management:
+  tracing:
+    sampling:
+      probability: 1.0   # capture 100% tracing data
+
+  zipkin:
+    tracing:
+      endpoint: http://localhost:9411/api/v2/spans
+
+logging:
+  pattern:
+    level: "%5p [${spring.application.name}, %X{traceId}, %X{spanId}]"
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      productService:
+        sliding-window-size: 5
+        minimum-number-of-calls: 3
+        wait-duration-in-open-state: 10s
+        failure-rate-threshold: 50
+  retry:
+    instances:
+      productRetry:
+        max-attempts: 3
+        wait-duration: 500ms
